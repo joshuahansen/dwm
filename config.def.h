@@ -5,8 +5,13 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=18" };
-static const char dmenufont[]       = "monospace:size=18";
+/*
+Bigger font for when nvidia driver is running.
+static const char *fonts[]          = { "DejaVu Sans Mono:size=18", "-*-font:awesome-*-*-*-*-12-*-*-*-*-*-*-*" };
+static const char dmenufont[]       = "DejaVu Sans Mono:size=18";
+*/
+static const char *fonts[]          = { "DejaVu Sans Mono:size=14", "-*-font:awesome-*-*-*-*-12-*-*-*-*-*-*-*" };
+static const char dmenufont[]       = "DejaVu Sans Mono:size=14";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
@@ -28,7 +33,7 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
@@ -60,11 +65,13 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "st", NULL };
 static const char *firefox[]  = { "firefox", NULL };
 
+#include <X11/XF86keysym.h>
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_z,      spawn,          {.v = firefox } },
+	{ MODKEY,                       XK_s,      spawn,          SHCMD("~/dmenu_scripts/scripts.sh") },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -97,6 +104,9 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} },
+    {0,     XF86XK_AudioMute,           spawn,          SHCMD("pamixer -t; kill -44 $(pidof sleep)") },
+    {0,     XF86XK_AudioLowerVolume,    spawn,          SHCMD("pamixer -d 5; kill -44 $(pidof sleep)") },
+    {0,     XF86XK_AudioRaiseVolume,    spawn,          SHCMD("pamixer -i 5; kill -44 $(pidof sleep)") },
 };
 
 /* button definitions */
